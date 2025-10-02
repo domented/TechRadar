@@ -1,5 +1,5 @@
 # I.BA_WEBLAB.F2501
-# Projektbeschreibung - Technologie-Radar
+# Projektbeschreibung - Technologie-Radar von Dominik Rohner
 
 Die allgemeine Projektbeschreibung wird in Umfang und Aufbau gemäss dem vorgegebenen Technologie-Radar umgesetzt (ohne weitere Ergänzung): https://github.com/web-programming-lab/web-programming-lab-projekt/blob/main/Technologie-Radar.md
 
