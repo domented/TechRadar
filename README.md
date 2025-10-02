@@ -8,7 +8,7 @@ Um das Technologie-Radar angemessen umzusetzen wird der folgende Technologie-Sta
 * **Frontend**: Angular
 * **Backend**: ExpressJS
 * **Datenbank**: MongoDB
-* **VCS**: GitHub Repository: https://github.com/domented/I.BA_WEBLAB.F2501
+* **VCS**: GitHub Repository: https://github.com/domented/TechRadar
 * **Projekt-Dokumentation**: Falls genehmigt, würde die Projektdokumentation in Craft erstellt und verlinkt werden.
 
 ----------
