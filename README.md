@@ -20,6 +20,8 @@ Um das Technologie-Radar angemessen umzusetzen wird der folgende Technologie-Sta
 - [Fazit und Reflexion](https://s.craft.me/YIZmNQ38HQIrEy)
 - [Arbeitsjournal](https://s.craft.me/9dwRsANPlRM3Of)
 
+- [Backup (Google Drive mit PDFs)](https://drive.google.com/drive/folders/1YP0td4eUAUhqx2HyR1Us9NNuS7BOUlCe?usp=sharing)
+
 # How to Start the TechRadar Project
 
 ## Prerequisites
