@@ -1,0 +1,47 @@
+<!-- src/app/features/unauthorized/unauthorized.html -->
+
+<div class="unauthorized-container">
+    <div class="unauthorized-card">
+
+        <!-- Icon -->
+        <div class="icon-wrapper">
+            <i class="fas fa-shield-alt"></i>
+        </div>
+
+        <!-- Heading -->
+        <h1 class="title">Zugriff verweigert</h1>
+
+        <!-- Message -->
+        <p class="message">
+            Sie haben keine Berechtigung, auf diesen Bereich zuzugreifen.
+            <br>
+            Diese Seite ist nur für Administratoren verfügbar.
+        </p>
+
+        <!-- User Info -->
+        <div class="user-info" *ngIf="authService.currentUser()">
+            <small class="text-muted">Angemeldet als:</small>
+            <p class="user-name">
+                <i class="fas fa-user me-2"></i>
+                {{ authService.currentUser()?.username }}
+                <span class="badge bg-secondary ms-2">
+          {{ authService.currentUser()?.role === 'admin' ? 'Admin' : 'Viewer' }}
+        </span>
+            </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <button class="btn btn-primary" (click)="goBack()">
+                <i class="fas fa-arrow-left me-2"></i>
+                Zurück zum Radar
+            </button>
+
+            <a routerLink="/login" class="btn btn-outline-secondary ms-2">
+                <i class="fas fa-sign-out-alt me-2"></i>
+                Abmelden
+            </a>
+        </div>
+
+    </div>
+</div>

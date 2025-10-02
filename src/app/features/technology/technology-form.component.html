@@ -1,0 +1,323 @@
+<!-- src/app/features/technology/technology-form.component.html -->
+
+<!--
+  Hauptcontainer für das Technologie-Formular
+  Responsive Design mit Bootstrap-Klassen für Mobile- und Desktop-Optimierung
+-->
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-12 col-lg-8 col-xl-6">
+
+            <!-- Header-Bereich mit Titel und Status-Information -->
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title mb-0">
+                        <i class="fas fa-plus-circle me-2"></i>
+                        Neue Technologie erfassen
+                    </h2>
+                    <p class="card-text mb-0 mt-2 opacity-75">
+                        Erfassen Sie eine neue Technologie für das Technology Radar Ihres Unternehmens
+                    </p>
+                </div>
+
+                <!--
+                  Erfolgs- und Fehlermeldungen
+                  Bieten direktes Feedback für Benutzeraktionen
+                -->
+                <div class="card-body">
+                    <!-- Erfolgsmeldung -->
+                    <div *ngIf="showSuccessMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Erfolgreich gespeichert!</strong> Die Technologie wurde erfasst.
+                        <button type="button" class="btn-close" (click)="showSuccessMessage = false"></button>
+                    </div>
+
+                    <!-- Fehlermeldung -->
+                    <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Fehler:</strong> {{ errorMessage }}
+                        <button type="button" class="btn-close" (click)="errorMessage = null"></button>
+                    </div>
+
+                    <!--
+                      Reactive Form - Herzstück der Benutzerinteraktion
+                      [formGroup] bindet das Template an unsere FormGroup aus der Komponente
+                      (ngSubmit) wird ausgelöst, wenn das Formular abgeschickt wird
+                    -->
+                    <form [formGroup]="technologyForm" (ngSubmit)="onSubmit()">
+
+                        <!--
+                          Name-Feld - Erstes und wichtigstes Feld
+                          formControlName bindet an das entsprechende FormControl
+                        -->
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">
+                                Name der Technologie <span class="text-danger">*</span>
+                            </label>
+                            <input
+                                    type="text"
+                                    id="name"
+                                    class="form-control"
+                                    [class.is-invalid]="isFieldInvalid('name')"
+                                    formControlName="name"
+                                    placeholder="z.B. ArgoCD, React, Docker..."
+                                    maxlength="100"
+                            />
+                            <!--
+                              Bedingte Fehleranzeige
+                              Wird nur angezeigt, wenn das Feld ungültig und berührt wurde
+                            -->
+                            <div *ngIf="isFieldInvalid('name')" class="invalid-feedback">
+                                {{ getFieldError('name') }}
+                            </div>
+                            <div class="form-text">
+                                Geben Sie den offiziellen Namen der Technologie ein (2-100 Zeichen)
+                            </div>
+                        </div>
+
+                        <!--
+                          Kategorie-Dropdown
+                          Verwendet die Enum-Werte für typsichere Auswahl
+                        -->
+                        <div class="mb-3">
+                            <label for="category" class="form-label fw-bold">
+                                Kategorie <span class="text-danger">*</span>
+                            </label>
+                            <select
+                                    id="category"
+                                    class="form-select"
+                                    [class.is-invalid]="isFieldInvalid('category')"
+                                    formControlName="category"
+                            >
+                                <option value="">Kategorie wählen...</option>
+                                <option *ngFor="let category of categories" [value]="category.value">
+                                    {{ category.label }}
+                                </option>
+                            </select>
+                            <div *ngIf="isFieldInvalid('category')" class="invalid-feedback">
+                                {{ getFieldError('category') }}
+                            </div>
+                            <div class="form-text">
+                                Ordnen Sie die Technologie in eine der vier ThoughtWorks-Kategorien ein
+                            </div>
+                        </div>
+
+                        <!--
+                          Status-Auswahl
+                          Beeinflusst die Validierung anderer Felder dynamisch
+                        -->
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">
+                                Status <span class="text-danger">*</span>
+                            </label>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-check">
+                                        <input
+                                                class="form-check-input"
+                                                type="radio"
+                                                id="statusDraft"
+                                                [value]="TechnologyStatus.DRAFT"
+                                                formControlName="status"
+                                        />
+                                        <label class="form-check-label" for="statusDraft">
+                                            <i class="fas fa-edit text-warning me-2"></i>
+                                            <strong>Entwurf</strong>
+                                        </label>
+                                    </div>
+                                    <small class="text-muted ms-4">
+                                        Speichern und später vervollständigen
+                                    </small>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-check">
+                                        <input
+                                                class="form-check-input"
+                                                type="radio"
+                                                id="statusPublished"
+                                                [value]="TechnologyStatus.PUBLISHED"
+                                                formControlName="status"
+                                        />
+                                        <label class="form-check-label" for="statusPublished">
+                                            <i class="fas fa-globe text-success me-2"></i>
+                                            <strong>Veröffentlicht</strong>
+                                        </label>
+                                    </div>
+                                    <small class="text-muted ms-4">
+                                        Sofort im Radar sichtbar
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!--
+                          Ring-Auswahl
+                          Nur erforderlich wenn Status = Published
+                          Zeigt erweiterte Informationen für bessere Entscheidung
+                        -->
+                        <div class="mb-3" *ngIf="technologyForm.get('status')?.value === TechnologyStatus.PUBLISHED">
+                            <label for="ring" class="form-label fw-bold">
+                                Einordnung (Ring) <span class="text-danger">*</span>
+                            </label>
+                            <select
+                                    id="ring"
+                                    class="form-select"
+                                    [class.is-invalid]="isFieldInvalid('ring')"
+                                    formControlName="ring"
+                            >
+                                <option value="">Einordnung wählen...</option>
+                                <option *ngFor="let ring of rings" [value]="ring.value">
+                                    {{ ring.label }} - {{ ring.description }}
+                                </option>
+                            </select>
+                            <div *ngIf="isFieldInvalid('ring')" class="invalid-feedback">
+                                {{ getFieldError('ring') }}
+                            </div>
+                            <div class="form-text">
+                                <strong>Assess:</strong> Beobachten •
+                                <strong>Trial:</strong> Ausprobieren •
+                                <strong>Adopt:</strong> Empfohlen •
+                                <strong>Hold:</strong> Vermeiden
+                            </div>
+                        </div>
+
+                        <!--
+                          Technologie-Beschreibung
+                          Großes Textfeld für detaillierte Informationen
+                        -->
+                        <div class="mb-3">
+                            <label for="description" class="form-label fw-bold">
+                                Beschreibung der Technologie <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                    id="description"
+                                    class="form-control"
+                                    [class.is-invalid]="isFieldInvalid('description')"
+                                    formControlName="description"
+                                    rows="4"
+                                    placeholder="Was ist diese Technologie? Wofür wird sie eingesetzt? Welche Probleme löst sie?"
+                                    maxlength="1000"
+                            ></textarea>
+                            <div *ngIf="isFieldInvalid('description')" class="invalid-feedback">
+                                {{ getFieldError('description') }}
+                            </div>
+                            <div class="form-text">
+                                Erklären Sie, was diese Technologie ist und wofür sie verwendet wird (10-1000 Zeichen)
+                            </div>
+                        </div>
+
+                        <!--
+                          Ring-Beschreibung
+                          Nur sichtbar und erforderlich wenn Status = Published
+                        -->
+                        <div class="mb-4" *ngIf="technologyForm.get('status')?.value === TechnologyStatus.PUBLISHED">
+                            <label for="ringDescription" class="form-label fw-bold">
+                                Begründung der Einordnung <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                    id="ringDescription"
+                                    class="form-control"
+                                    [class.is-invalid]="isFieldInvalid('ringDescription')"
+                                    formControlName="ringDescription"
+                                    rows="5"
+                                    placeholder="Warum ordnen Sie diese Technologie in diesen Ring ein? Welche Erfahrungen haben Sie gemacht? Was sind die Vor- und Nachteile?"
+                                    maxlength="2000"
+                            ></textarea>
+                            <div *ngIf="isFieldInvalid('ringDescription')" class="invalid-feedback">
+                                {{ getFieldError('ringDescription') }}
+                            </div>
+                            <div class="form-text">
+                                Erklären Sie die Gründe für Ihre Einordnung und teilen Sie Ihre Erfahrungen (20-2000 Zeichen)
+                            </div>
+                        </div>
+
+                        <!--
+                          Action-Buttons
+                          Verschiedene Speicheroptionen für flexiblen Workflow
+                        -->
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <!-- Reset Button -->
+                            <button
+                                    type="button"
+                                    class="btn btn-outline-secondary"
+                                    (click)="onReset()"
+                                    [disabled]="isSubmitting"
+                            >
+                                <i class="fas fa-undo me-2"></i>
+                                Zurücksetzen
+                            </button>
+
+                            <!-- Save as Draft Button (nur wenn nicht bereits Draft-Modus) -->
+                            <button
+                                    type="button"
+                                    class="btn btn-outline-primary"
+                                    (click)="onSaveAsDraft()"
+                                    [disabled]="isSubmitting || technologyForm.get('status')?.value === TechnologyStatus.DRAFT"
+                                    *ngIf="technologyForm.get('status')?.value !== TechnologyStatus.DRAFT"
+                            >
+                                <i class="fas fa-save me-2"></i>
+                                Als Entwurf speichern
+                            </button>
+
+                            <!-- Main Submit Button -->
+                            <button
+                                    type="submit"
+                                    class="btn"
+                                    [class.btn-success]="technologyForm.get('status')?.value === TechnologyStatus.PUBLISHED"
+                                    [class.btn-primary]="technologyForm.get('status')?.value === TechnologyStatus.DRAFT"
+                                    [disabled]="isSubmitting"
+                            >
+                                <!-- Loading Spinner -->
+                                <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2" role="status"></span>
+                                <i *ngIf="!isSubmitting && technologyForm.get('status')?.value === TechnologyStatus.PUBLISHED"
+                                   class="fas fa-globe me-2"></i>
+                                <i *ngIf="!isSubmitting && technologyForm.get('status')?.value === TechnologyStatus.DRAFT"
+                                   class="fas fa-save me-2"></i>
+
+                                {{ isSubmitting ? 'Speichert...' :
+                                (technologyForm.get('status')?.value === TechnologyStatus.PUBLISHED ? 'Veröffentlichen' : 'Entwurf speichern') }}
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+            <!--
+              Hilfebereich mit zusätzlichen Informationen
+              Unterstützt Benutzer bei der korrekten Verwendung
+            -->
+            <div class="card mt-4">
+                <div class="card-header bg-light">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2 text-info"></i>
+                        Hilfe & Informationen
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Kategorien:</h6>
+                            <ul class="small">
+                                <li><strong>Techniques:</strong> Entwicklungsmethoden, Architekturprinzipien</li>
+                                <li><strong>Tools:</strong> Software-Werkzeuge, Entwicklungsumgebungen</li>
+                                <li><strong>Platforms:</strong> Cloud-Services, Betriebssysteme</li>
+                                <li><strong>Languages & Frameworks:</strong> Programmiersprachen, Bibliotheken</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="fw-bold">Workflow:</h6>
+                            <ol class="small">
+                                <li>Technologie als <strong>Entwurf</strong> erfassen</li>
+                                <li>Ring und Begründung ergänzen</li>
+                                <li>Als <strong>veröffentlicht</strong> markieren</li>
+                                <li>Erscheint im Technology Radar</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

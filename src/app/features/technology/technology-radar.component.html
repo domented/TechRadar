@@ -1,0 +1,380 @@
+<!-- src/app/features/technology/technology-radar.component.html -->
+
+<div class="radar-container">
+    <!-- Header -->
+    <div class="radar-header">
+        <div class="text-center mb-4">
+            <h1 class="radar-title">
+                <i class="fas fa-radar-dish me-3"></i>
+                Technology Radar
+            </h1>
+            <p class="radar-subtitle">
+                Interaktive Visualisierung der Technologien innerhalb des TechStacks
+            </p>
+            <div class="radar-actions mt-3">
+                <button class="btn btn-outline-primary me-2" (click)="loadTechnologies()">
+                    <i class="fas fa-sync-alt me-2" [class.fa-spin]="isLoading"></i>
+                    Aktualisieren
+                </button>
+                <button class="btn btn-primary" (click)="exportRadar()">
+                    <i class="fas fa-download me-2"></i>
+                    Als SVG exportieren
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Controls -->
+    <div class="radar-controls card mb-4">
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label">Quadrant Filter</label>
+                    <select
+                            class="form-select"
+                            [(ngModel)]="selectedQuadrant"
+                            (change)="onQuadrantFilter(selectedQuadrant)">
+                        <option value="all">Alle Quadranten</option>
+                        <option [value]="TechnologyCategory.TECHNIQUES">Techniques</option>
+                        <option [value]="TechnologyCategory.TOOLS">Tools</option>
+                        <option [value]="TechnologyCategory.PLATFORMS">Platforms</option>
+                        <option [value]="TechnologyCategory.LANGUAGES_FRAMEWORKS">Languages & Frameworks</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label">Ring Filter</label>
+                    <select
+                            class="form-select"
+                            [(ngModel)]="selectedRing"
+                            (change)="onRingFilter(selectedRing)">
+                        <option value="all">Alle Ringe</option>
+                        <option [value]="TechnologyRing.ADOPT">Adopt</option>
+                        <option [value]="TechnologyRing.TRIAL">Trial</option>
+                        <option [value]="TechnologyRing.ASSESS">Assess</option>
+                        <option [value]="TechnologyRing.HOLD">Hold</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="form-check mt-4">
+                        <input
+                                class="form-check-input"
+                                type="checkbox"
+                                id="showDrafts"
+                                [(ngModel)]="showDrafts"
+                                (change)="onShowDraftsChange(showDrafts)">
+                        <label class="form-check-label" for="showDrafts">
+                            Entwürfe anzeigen
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="radar-stats-mini">
+                        <small class="text-muted">
+                            {{ getRadarStats().visible }} von {{ getRadarStats().total }} Technologien
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div *ngIf="errorMessage" class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        {{ errorMessage }}
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Lädt Radar...</span>
+        </div>
+        <p class="mt-3 text-muted">Technology Radar wird geladen...</p>
+    </div>
+
+    <!-- Main Radar Display -->
+    <div *ngIf="!isLoading && !errorMessage" class="radar-main">
+        <div class="row">
+
+            <!-- Radar Visualization -->
+            <div class="col-xl-9">
+                <div class="radar-svg-container">
+                    <svg
+                            id="technology-radar-svg"
+                            [attr.width]="getRadarSize()"
+                            [attr.height]="getRadarSize()"
+                            [attr.viewBox]="'0 0 ' + getRadarSize() + ' ' + getRadarSize()"
+                            class="technology-radar-svg">
+
+                        <!-- Background -->
+                        <defs>
+                            <radialGradient id="radarGradient" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+                                <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+                            </radialGradient>
+
+                            <!-- Drop shadow filter -->
+                            <filter id="dropshadow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+                                <feOffset dx="1" dy="1" result="offset" />
+                                <feComponentTransfer>
+                                    <feFuncA type="linear" slope="0.3"/>
+                                </feComponentTransfer>
+                                <feMerge>
+                                    <feMergeNode/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+
+                        <!-- Radar Background Circle -->
+                        <circle
+                                [attr.cx]="getCenter()"
+                                [attr.cy]="getCenter()"
+                                [attr.r]="getRingRadius(3)"
+                                fill="url(#radarGradient)"
+                                stroke="#dee2e6"
+                                stroke-width="2"/>
+
+                        <!-- Quadrant Separators -->
+                        <g class="quadrant-separators">
+                            <line
+                                    [attr.x1]="getCenter()"
+                                    [attr.y1]="getCenter() - getRingRadius(3)"
+                                    [attr.x2]="getCenter()"
+                                    [attr.y2]="getCenter() + getRingRadius(3)"
+                                    stroke="#ced4da"
+                                    stroke-width="1"
+                                    stroke-dasharray="5,5"/>
+                            <line
+                                    [attr.x1]="getCenter() - getRingRadius(3)"
+                                    [attr.y1]="getCenter()"
+                                    [attr.x2]="getCenter() + getRingRadius(3)"
+                                    [attr.y2]="getCenter()"
+                                    stroke="#ced4da"
+                                    stroke-width="1"
+                                    stroke-dasharray="5,5"/>
+                        </g>
+
+                        <!-- Ring Circles -->
+                        <g class="rings">
+                            <circle
+                                    *ngFor="let ring of rings; let i = index"
+                                    [attr.cx]="getCenter()"
+                                    [attr.cy]="getCenter()"
+                                    [attr.r]="getRingRadius(i)"
+                                    fill="none"
+                                    [attr.stroke]="ring.color"
+                                    stroke-width="2"
+                                    opacity="0.6"/>
+                        </g>
+
+                        <!-- Ring Labels -->
+                        <g class="ring-labels">
+                            <text
+                                    *ngFor="let ring of rings; let i = index"
+                                    [attr.x]="getRingLabelPosition(i).x"
+                                    [attr.y]="getRingLabelPosition(i).y"
+                                    class="ring-label"
+                                    [attr.fill]="ring.color">
+                                {{ ring.name }}
+                            </text>
+                        </g>
+
+                        <!-- Quadrant Labels -->
+                        <g class="quadrant-labels">
+                            <text
+                                    *ngFor="let quadrant of quadrants; let i = index"
+                                    [attr.x]="getQuadrantLabelPosition(i).x"
+                                    [attr.y]="getQuadrantLabelPosition(i).y"
+                                    class="quadrant-label"
+                                    [attr.fill]="quadrant.color"
+                                    text-anchor="middle"
+                                    dominant-baseline="middle">
+                                {{ quadrant.name }}
+                            </text>
+                        </g>
+
+                        <!-- Technology Points - RADIKAL VEREINFACHT -->
+                        <g class="technology-points">
+                            <circle
+                                    *ngFor="let point of radarPoints; trackBy: trackByTechnology"
+                                    [attr.cx]="point.x"
+                                    [attr.cy]="point.y"
+                                    r="6"
+                                    [attr.fill]="getPointColor(point)"
+                                    [attr.stroke]="getPointStrokeColor(point)"
+                                    [attr.stroke-width]="selectedTechnology === point.technology ? 3 : 1"
+                                    [style.opacity]="shouldShowTechnology(point) ? 1 : 0.2"
+                                    style="cursor: pointer; transition: none;"
+                                    (mouseenter)="onTechnologyHover(point.technology)"
+                                    (mouseleave)="onTechnologyHover(null)"
+                                    (click)="onTechnologyClick(point.technology)">
+
+                                <!-- Tooltip -->
+                                <title>{{ point.technology.name }} ({{ point.technology.category }} - {{ point.technology.ring }})</title>
+                            </circle>
+                        </g>
+
+                        <!-- Technology Labels (nur bei Hover) -->
+                        <g class="technology-labels" *ngIf="hoveredTechnology">
+                            <ng-container *ngFor="let point of radarPoints">
+                                <g *ngIf="point.technology === hoveredTechnology">
+                                    <rect
+                                            [attr.x]="point.x - 40"
+                                            [attr.y]="point.y - 25"
+                                            width="80"
+                                            height="16"
+                                            fill="rgba(0,0,0,0.8)"
+                                            rx="3"/>
+                                    <text
+                                            [attr.x]="point.x"
+                                            [attr.y]="point.y - 15"
+                                            class="technology-label-text"
+                                            text-anchor="middle"
+                                            fill="white"
+                                            font-size="10">
+                                        {{ point.technology.name }}
+                                    </text>
+                                </g>
+                            </ng-container>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- Legend and Statistics -->
+            <div class="col-xl-3">
+                <div class="radar-sidebar">
+
+                    <!-- Legend -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Legende
+                            </h5>
+                        </div>
+                        <div class="card-body">
+
+                            <!-- Quadranten -->
+                            <div class="legend-section mb-3">
+                                <h6>Quadranten</h6>
+                                <div class="legend-items">
+                                    <div
+                                            *ngFor="let quadrant of quadrants"
+                                            class="legend-item"
+                                            [class.active]="selectedQuadrant === 'all' || selectedQuadrant === quadrant.category"
+                                            (click)="onQuadrantFilter(selectedQuadrant === quadrant.category ? 'all' : quadrant.category)">
+                                        <div class="legend-color" [style.background-color]="quadrant.color"></div>
+                                        <span class="legend-text">{{ quadrant.name }}</span>
+                                        <span class="legend-count">
+                                            {{ getQuadrantCount(quadrant.name) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Ringe -->
+                            <div class="legend-section">
+                                <h6>Ringe</h6>
+                                <div class="legend-items">
+                                    <div
+                                            *ngFor="let ring of rings"
+                                            class="legend-item"
+                                            [class.active]="selectedRing === 'all' || selectedRing === ring.ring"
+                                            (click)="onRingFilter(selectedRing === ring.ring ? 'all' : ring.ring)">
+                                        <div class="legend-color" [style.background-color]="ring.color"></div>
+                                        <span class="legend-text">{{ ring.name }}</span>
+                                        <span class="legend-count">
+                                            {{ getRingCount(ring.name) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-chart-bar me-2"></i>
+                                Statistiken
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="stat-item">
+                                <span class="stat-label">Gesamt Technologien:</span>
+                                <span class="stat-value">{{ technologies.length }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Veröffentlicht:</span>
+                                <span class="stat-value">{{ publishedTechnologies.length }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Im Radar sichtbar:</span>
+                                <span class="stat-value">{{ getRadarStats().visible }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Technology Detail Panel -->
+    <div *ngIf="selectedTechnology" class="technology-detail-overlay" (click)="closeDetails()">
+        <div class="technology-detail-panel" (click)="$event.stopPropagation()">
+            <div class="detail-header">
+                <h4>{{ selectedTechnology.name }}</h4>
+                <button class="btn-close" (click)="closeDetails()"></button>
+            </div>
+
+            <div class="detail-body">
+                <div class="detail-badges mb-3">
+                    <span class="badge badge-category" [style.background-color]="getQuadrantColor(selectedTechnology.category!)">
+                        {{ selectedTechnology.category }}
+                    </span>
+                    <span class="badge badge-ring" [style.background-color]="getRingColor(selectedTechnology.ring!)">
+                        {{ selectedTechnology.ring }}
+                    </span>
+                    <span class="badge badge-status"
+                          [class.badge-success]="selectedTechnology.status === TechnologyStatus.PUBLISHED"
+                          [class.badge-warning]="selectedTechnology.status === TechnologyStatus.DRAFT">
+                        {{ selectedTechnology.status === TechnologyStatus.PUBLISHED ? 'Veröffentlicht' : 'Entwurf' }}
+                    </span>
+                </div>
+
+                <div class="detail-description">
+                    <h6>Beschreibung</h6>
+                    <p>{{ selectedTechnology.description }}</p>
+                </div>
+
+                <div *ngIf="selectedTechnology.ringDescription" class="detail-ring-description">
+                    <h6>Ring-Bewertung</h6>
+                    <p>{{ selectedTechnology.ringDescription }}</p>
+                </div>
+
+                <div class="detail-meta" *ngIf="selectedTechnology.updatedAt">
+                    <small class="text-muted">
+                        Letzte Änderung: {{ formatDate(selectedTechnology.updatedAt) }}
+                    </small>
+                </div>
+            </div>
+
+            <div class="detail-actions">
+                <a [routerLink]="['/technology/edit', selectedTechnology.id]" class="btn btn-primary">
+                    <i class="fas fa-edit me-2"></i>
+                    Bearbeiten
+                </a>
+                <button class="btn btn-secondary ms-2" (click)="closeDetails()">
+                    Schließen
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,131 @@
+<!-- src/app/app.html -->
+
+<div class="app-container">
+    <!-- Navigation Header -->
+    <header class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+        <div class="container-fluid">
+            <!-- Brand/Logo Bereich -->
+            <div class="navbar-brand d-flex align-items-center">
+                <i class="fas fa-radar-chart me-2 fs-4"></i>
+                <span class="fw-bold fs-5">{{ title() }}</span>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button
+                    class="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav"
+            >
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Hauptnavigation -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                    <!-- Viewer Bereich - Für ALLE authentifizierten User -->
+                    <li class="nav-item" *ngIf="authService.isAuthenticated()">
+                        <a class="nav-link" routerLink="/technology/radar" routerLinkActive="active">
+                            <i class="fas fa-eye me-1"></i>
+                            Technology Radar
+                        </a>
+                    </li>
+
+                    <li class="nav-item" *ngIf="authService.isAuthenticated()">
+                        <a class="nav-link" routerLink="/technology/list" routerLinkActive="active">
+                            <i class="fas fa-list me-1"></i>
+                            Technologien
+                        </a>
+                    </li>
+
+                    <!-- Administration - NUR FÜR ADMINS -->
+                    <li class="nav-item dropdown" *ngIf="authService.isAdmin()">
+                        <a
+                                class="nav-link dropdown-toggle"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                        >
+                            <i class="fas fa-cogs me-1"></i>
+                            Administration
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" routerLink="/technology/new">
+                                    <i class="fas fa-plus me-2"></i>
+                                    Neue Technologie
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <!-- Auth Status rechts -->
+                <div class="navbar-nav">
+                    <!-- Wenn NICHT eingeloggt -->
+                    <div class="nav-item" *ngIf="!authService.isAuthenticated()">
+                        <a class="btn btn-outline-light" routerLink="/login">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            Anmelden
+                        </a>
+                    </div>
+
+                    <!-- Wenn eingeloggt -->
+                    <div class="nav-item dropdown" *ngIf="authService.isAuthenticated()">
+                        <a
+                                class="nav-link dropdown-toggle d-flex align-items-center"
+                                href="#"
+                                role="button"
+                                data-bs-toggle="dropdown"
+                        >
+                            <i class="fas fa-user-circle me-2 fs-5"></i>
+                            <div class="d-flex flex-column align-items-start">
+                                <span class="fw-bold">{{ authService.currentUser()?.username }}</span>
+                                <small class="text-light opacity-75">
+                                    {{ authService.currentUser()?.role === 'admin' ? 'Administrator' : 'Viewer' }}
+                                </small>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li class="px-3 py-2 border-bottom">
+                                <small class="text-muted">Angemeldet als</small><br>
+                                <strong>{{ authService.currentUser()?.email }}</strong>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#" (click)="logout($event)">
+                                    <i class="fas fa-sign-out-alt me-2"></i>
+                                    Abmelden
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hauptinhalt -->
+    <main class="main-content">
+        <router-outlet></router-outlet>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-light border-top mt-auto">
+        <div class="container-fluid py-3">
+            <div class="row">
+                <div class="col-md-6">
+                    <small class="text-muted">
+                        2025 TechRadar for I.BA_WEBLAB.F2501
+                    </small>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <small class="text-muted">
+                        <i class="fas fa-code me-1"></i>
+                        Powered by Angular {{ getAngularVersion() }}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </footer>
+</div>

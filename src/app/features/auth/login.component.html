@@ -1,0 +1,102 @@
+<!-- src/app/features/auth/login.component.html -->
+
+<div class="login-container">
+    <div class="login-card">
+
+        <!-- Header -->
+        <div class="login-header">
+            <i class="fas fa-radar-chart login-icon"></i>
+            <h2 class="login-title">Technology Radar</h2>
+            <p class="login-subtitle">Melden Sie sich an, um fortzufahren</p>
+        </div>
+
+        <!-- Login Form -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+
+            <!-- Username Field -->
+            <div class="form-group">
+                <label for="username" class="form-label">
+                    <i class="fas fa-user"></i>
+                    Benutzername
+                </label>
+                <input
+                        type="text"
+                        id="username"
+                        formControlName="username"
+                        class="form-control"
+                        [class.is-invalid]="username?.invalid && username?.touched"
+                        placeholder="Geben Sie Ihren Benutzernamen ein"
+                        autocomplete="username"
+                />
+                <div class="invalid-feedback" *ngIf="username?.invalid && username?.touched">
+                    <span *ngIf="username?.errors?.['required']">Benutzername ist erforderlich</span>
+                    <span *ngIf="username?.errors?.['minlength']">Mindestens 3 Zeichen erforderlich</span>
+                </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="form-group">
+                <label for="password" class="form-label">
+                    <i class="fas fa-lock"></i>
+                    Passwort
+                </label>
+                <input
+                        type="password"
+                        id="password"
+                        formControlName="password"
+                        class="form-control"
+                        [class.is-invalid]="password?.invalid && password?.touched"
+                        placeholder="Geben Sie Ihr Passwort ein"
+                        autocomplete="current-password"
+                />
+                <div class="invalid-feedback" *ngIf="password?.invalid && password?.touched">
+                    <span *ngIf="password?.errors?.['required']">Passwort ist erforderlich</span>
+                    <span *ngIf="password?.errors?.['minlength']">Mindestens 8 Zeichen erforderlich</span>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="alert alert-danger" *ngIf="errorMessage()">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                {{ errorMessage() }}
+            </div>
+
+            <!-- Submit Button -->
+            <button
+                    type="submit"
+                    class="btn btn-primary btn-login"
+                    [disabled]="loginForm.invalid || isLoading()"
+            >
+        <span *ngIf="!isLoading()">
+          <i class="fas fa-sign-in-alt me-2"></i>
+          Anmelden
+        </span>
+                <span *ngIf="isLoading()">
+          <i class="fas fa-spinner fa-spin me-2"></i>
+          Wird angemeldet...
+        </span>
+            </button>
+
+        </form>
+
+        <!-- Footer Info -->
+        <div class="login-footer">
+            <div class="info-box">
+                <i class="fas fa-info-circle me-2"></i>
+                <div>
+                    <strong>Demo-Zugang:</strong><br>
+                    <small>Admin: admin / Admin123!</small><br>
+                    <small>Viewer: viewer / Viewer123!</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Background Decoration -->
+    <div class="background-decoration">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+    </div>
+</div>

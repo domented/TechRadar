@@ -1,0 +1,842 @@
+/* src/app/features/technology/technology-radar.component.css */
+
+/* Container und Layout */
+.radar-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.radar-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.radar-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.radar-subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 2rem;
+}
+
+/* Filter Controls */
+.radar-controls {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.filter-group {
+    margin-bottom: 1rem;
+}
+
+.filter-group:last-child {
+    margin-bottom: 0;
+}
+
+.filter-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.filter-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border: 2px solid #e9ecef;
+    background: white;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.filter-btn:hover {
+    border-color: #007bff;
+    color: #007bff;
+    transform: translateY(-1px);
+}
+
+.filter-btn.active {
+    background: #007bff;
+    border-color: #007bff;
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* SVG Radar Container - ZENTRIERT */
+.radar-svg-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    width: 100%;
+}
+
+/* SVG Radar Styling */
+.technology-radar-svg {
+    display: block;
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+}
+
+/* Ring Styling */
+.ring {
+    fill: none;
+    stroke-width: 2;
+    opacity: 0.7;
+}
+
+.ring.adopt {
+    stroke: #28a745;
+}
+
+.ring.trial {
+    stroke: #17a2b8;
+}
+
+.ring.assess {
+    stroke: #ffc107;
+}
+
+.ring.hold {
+    stroke: #dc3545;
+}
+
+/* Ring Backgrounds */
+.ring-area {
+    opacity: 0.05;
+    transition: opacity 0.3s ease;
+}
+
+.ring-area.adopt {
+    fill: #28a745;
+}
+
+.ring-area.trial {
+    fill: #17a2b8;
+}
+
+.ring-area.assess {
+    fill: #ffc107;
+}
+
+.ring-area.hold {
+    fill: #dc3545;
+}
+
+.ring-area:hover {
+    opacity: 0.1;
+}
+
+/* Quadrant Lines */
+.quadrant-line {
+    stroke: #6c757d;
+    stroke-width: 2;
+    opacity: 0.3;
+}
+
+/* Quadrant Labels */
+.quadrant-label {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    opacity: 0.8;
+}
+
+.quadrant-label.techniques {
+    fill: #e74c3c;
+}
+
+.quadrant-label.tools {
+    fill: #3498db;
+}
+
+.quadrant-label.platforms {
+    fill: #2ecc71;
+}
+
+.quadrant-label.languages {
+    fill: #f39c12;
+}
+
+/* Ring Labels */
+.ring-label {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    opacity: 0.7;
+}
+
+.ring-label.adopt {
+    fill: #28a745;
+}
+
+.ring-label.trial {
+    fill: #17a2b8;
+}
+
+.ring-label.assess {
+    fill: #ffc107;
+}
+
+.ring-label.hold {
+    fill: #dc3545;
+}
+
+/* Technology Points */
+.technology-point {
+    cursor: pointer;
+    transition: none !important;
+    transform: none !important;
+    stroke: transparent;
+    stroke-width: 12;
+}
+
+.technology-point:hover {
+    filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4)) brightness(1.1);
+    stroke: rgba(255, 255, 255, 0.8);
+    stroke-width: 3;
+}
+
+.technology-point.filtered {
+    opacity: 0.2;
+}
+
+.technology-point.selected {
+    stroke: #007bff;
+    stroke-width: 3;
+    filter: drop-shadow(0 2px 4px rgba(0, 123, 255, 0.5));
+}
+
+/* Technology Point Shapes basierend auf Kategorie */
+.tech-circle {
+    transition: none !important;
+}
+
+.tech-circle.techniques {
+    fill: #e74c3c;
+    stroke: #c0392b;
+    stroke-width: 2;
+}
+
+.tech-circle.tools {
+    fill: #3498db;
+    stroke: #2980b9;
+    stroke-width: 2;
+}
+
+.tech-circle.platforms {
+    fill: #2ecc71;
+    stroke: #27ae60;
+    stroke-width: 2;
+}
+
+.tech-circle.languages {
+    fill: #f39c12;
+    stroke: #e67e22;
+    stroke-width: 2;
+}
+
+/* Status-spezifische Styling */
+.tech-circle.draft {
+    fill-opacity: 0.6;
+    stroke-dasharray: 4,2;
+}
+
+.tech-circle.published {
+    fill-opacity: 1;
+}
+
+/* Technology Labels */
+.technology-label {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    fill: #2c3e50;
+    pointer-events: none !important;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.technology-point:hover .technology-label {
+    opacity: 1;
+}
+
+.technology-labels,
+.technology-labels *,
+.technology-label-text {
+    pointer-events: none !important;
+}
+
+/* Tooltip Styling */
+.tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 0.75rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    max-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.tooltip.visible {
+    opacity: 1;
+}
+
+.tooltip-title {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    color: #ffffff;
+}
+
+.tooltip-category {
+    color: #ffc107;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.tooltip-description {
+    color: #e9ecef;
+    font-size: 0.8rem;
+    line-height: 1.4;
+}
+
+.tooltip-ring {
+    color: #17a2b8;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+/* Legend */
+.radar-legend {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.legend-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.legend-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+.legend-section {
+    margin-bottom: 1rem;
+}
+
+.legend-section:last-child {
+    margin-bottom: 0;
+}
+
+.legend-section-title {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.legend-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.legend-item:hover {
+    background-color: rgba(0, 123, 255, 0.1);
+}
+
+.legend-item.active {
+    background-color: rgba(0, 123, 255, 0.2);
+    font-weight: 600;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.legend-color.techniques {
+    background: #e74c3c;
+}
+
+.legend-color.tools {
+    background: #3498db;
+}
+
+.legend-color.platforms {
+    background: #2ecc71;
+}
+
+.legend-color.languages {
+    background: #f39c12;
+}
+
+.legend-ring {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid;
+    flex-shrink: 0;
+}
+
+.legend-ring.adopt {
+    border-color: #28a745;
+}
+
+.legend-ring.trial {
+    border-color: #17a2b8;
+}
+
+.legend-ring.assess {
+    border-color: #ffc107;
+}
+
+.legend-ring.hold {
+    border-color: #dc3545;
+}
+
+.legend-count {
+    margin-left: auto;
+    font-size: 0.8rem;
+    color: #6c757d;
+    background: #f8f9fa;
+    padding: 0.1rem 0.4rem;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Statistics */
+.radar-stats {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.stats-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 8px;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    background: #e9ecef;
+    transform: translateY(-2px);
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Technology Detail Panel */
+.technology-detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.technology-detail-panel {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: slideInUp 0.3s ease;
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+}
+
+.detail-badges {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+}
+
+.detail-actions {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    gap: 0.5rem;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Loading State */
+.radar-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    color: #6c757d;
+}
+
+.loading-spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Empty State */
+.radar-empty {
+    text-align: center;
+    padding: 3rem;
+    color: #6c757d;
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.empty-description {
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .radar-container {
+        padding: 1.5rem;
+    }
+
+    .radar-title {
+        font-size: 2rem;
+    }
+
+    .legend-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .radar-container {
+        padding: 1rem;
+    }
+
+    .radar-title {
+        font-size: 1.75rem;
+    }
+
+    .radar-svg-container {
+        padding: 1rem;
+    }
+
+    .filter-buttons {
+        flex-direction: column;
+    }
+
+    .filter-btn {
+        text-align: center;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .quadrant-label {
+        font-size: 14px;
+    }
+
+    .ring-label {
+        font-size: 10px;
+    }
+
+    .technology-label {
+        font-size: 8px;
+    }
+
+    .tooltip {
+        max-width: 250px;
+        font-size: 0.8rem;
+    }
+
+    .technology-detail-panel {
+        padding: 1.5rem;
+        width: 95%;
+    }
+}
+
+@media (max-width: 576px) {
+    .radar-title {
+        font-size: 1.5rem;
+    }
+
+    .radar-subtitle {
+        font-size: 1rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .legend-content {
+        gap: 1rem;
+    }
+
+    .quadrant-label {
+        font-size: 12px;
+    }
+
+    .ring-label {
+        font-size: 9px;
+    }
+
+    .tooltip {
+        max-width: 200px;
+        padding: 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* Print Styles */
+@media print {
+    .radar-controls,
+    .tooltip,
+    .technology-detail-overlay {
+        display: none !important;
+    }
+
+    .radar-container {
+        padding: 0;
+    }
+
+    .radar-svg-container {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .technology-point {
+        filter: none;
+    }
+
+    .legend-content {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+    .technology-point,
+    .filter-btn,
+    .stat-item,
+    .ring-area,
+    .tooltip,
+    .technology-label,
+    .technology-detail-overlay,
+    .technology-detail-panel {
+        transition: none !important;
+        animation: none !important;
+    }
+
+    .loading-spinner {
+        animation: none;
+        border-top-color: transparent;
+    }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+    .technology-radar-svg {
+        border: 2px solid #000;
+    }
+
+    .ring {
+        stroke-width: 3;
+        opacity: 1;
+    }
+
+    .quadrant-line {
+        stroke: #000;
+        stroke-width: 3;
+        opacity: 1;
+    }
+
+    .tech-circle {
+        stroke-width: 3;
+    }
+
+    .tooltip {
+        background: #000;
+        border: 2px solid #fff;
+    }
+}
+
+/* Focus States für Keyboard Navigation */
+.technology-point:focus {
+    outline: 3px solid #007bff;
+    outline-offset: 2px;
+}
+
+.filter-btn:focus {
+    outline: 3px solid #007bff;
+    outline-offset: 2px;
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom Scrollbar */
+.radar-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.radar-container::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.radar-container::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+.radar-container::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.radar-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+}

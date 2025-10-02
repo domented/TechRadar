@@ -1,0 +1,338 @@
+<!-- src/app/features/technology/technology-list.component.html -->
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+
+            <!-- Header mit Statistiken und Aktionen -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h2 class="card-title mb-0">
+                                <i class="fas fa-list me-2"></i>
+                                Technologie-Verwaltung
+                            </h2>
+                            <p class="card-text mb-0 mt-1 opacity-75">
+                                Überblick über alle erfassten Technologien in Ihrem Technology Radar
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-md-end mt-2 mt-md-0">
+                            <a routerLink="/technology/new" class="btn btn-light">
+                                <i class="fas fa-plus me-2"></i>
+                                Neue Technologie
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistiken-Bereich -->
+                <div class="card-body bg-light">
+                    <div class="row text-center">
+                        <div class="col-6 col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-primary mb-1">{{ getTotalTechnologiesCount() }}</h4>
+                                <small class="text-muted">Gesamt</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-success mb-1">{{ getPublishedCount() }}</h4>
+                                <small class="text-muted">Veröffentlicht</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-warning mb-1">{{ getDraftCount() }}</h4>
+                                <small class="text-muted">Entwürfe</small>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-3">
+                            <div class="stat-item">
+                                <h4 class="text-info mb-1">{{ getTechnologiesCount() }}</h4>
+                                <small class="text-muted">Angezeigt</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback-Nachrichten -->
+            <div *ngIf="successMessage" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong>Erfolg!</strong> {{ successMessage }}
+                <button type="button" class="btn-close" (click)="successMessage = null"></button>
+            </div>
+
+            <div *ngIf="errorMessage" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <strong>Fehler!</strong> {{ errorMessage }}
+                <button type="button" class="btn-close" (click)="errorMessage = null"></button>
+            </div>
+
+            <!-- Filter und Suche -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-filter me-2"></i>
+                        Filter und Suche
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3">
+
+                        <!-- Suchfeld -->
+                        <div class="col-md-6">
+                            <label for="searchInput" class="form-label">Suche</label>
+                            <div class="input-group">
+                <span class="input-group-text">
+                  <i class="fas fa-search"></i>
+                </span>
+                                <input
+                                        type="text"
+                                        id="searchInput"
+                                        class="form-control"
+                                        placeholder="Nach Name, Beschreibung suchen..."
+                                        [(ngModel)]="searchQuery"
+                                        (input)="onSearchChange($event.target.value || '')"
+                                />
+                                <button
+                                        *ngIf="searchQuery"
+                                        class="btn btn-outline-secondary"
+                                        type="button"
+                                        (click)="searchQuery = ''; onSearchChange('')"
+                                >
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Status-Filter -->
+                        <div class="col-md-2">
+                            <label for="statusFilter" class="form-label">Status</label>
+                            <select
+                                    id="statusFilter"
+                                    class="form-select"
+                                    [(ngModel)]="selectedStatus"
+                                    (change)="onStatusFilterChange(selectedStatus)"
+                            >
+                                <option value="all">Alle Status</option>
+                                <option [value]="TechnologyStatus.PUBLISHED">Veröffentlicht</option>
+                                <option [value]="TechnologyStatus.DRAFT">Entwurf</option>
+                            </select>
+                        </div>
+
+                        <!-- Kategorie-Filter -->
+                        <div class="col-md-2">
+                            <label for="categoryFilter" class="form-label">Kategorie</label>
+                            <select
+                                    id="categoryFilter"
+                                    class="form-select"
+                                    [(ngModel)]="selectedCategory"
+                                    (change)="onCategoryFilterChange(selectedCategory)"
+                            >
+                                <option value="all">Alle Kategorien</option>
+                                <option [value]="TechnologyCategory.TECHNIQUES">Techniques</option>
+                                <option [value]="TechnologyCategory.TOOLS">Tools</option>
+                                <option [value]="TechnologyCategory.PLATFORMS">Platforms</option>
+                                <option [value]="TechnologyCategory.LANGUAGES_FRAMEWORKS">Languages & Frameworks</option>
+                            </select>
+                        </div>
+
+                        <!-- Ring-Filter -->
+                        <div class="col-md-2">
+                            <label for="ringFilter" class="form-label">Ring</label>
+                            <select
+                                    id="ringFilter"
+                                    class="form-select"
+                                    [(ngModel)]="selectedRing"
+                                    (change)="onRingFilterChange(selectedRing)"
+                            >
+                                <option value="all">Alle Ringe</option>
+                                <option [value]="TechnologyRing.ADOPT">Adopt</option>
+                                <option [value]="TechnologyRing.TRIAL">Trial</option>
+                                <option [value]="TechnologyRing.ASSESS">Assess</option>
+                                <option [value]="TechnologyRing.HOLD">Hold</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Haupt-Technologie-Tabelle -->
+            <div class="card shadow-sm">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-database me-2"></i>
+                        Technologien ({{ getTechnologiesCount() }})
+                    </h5>
+                    <button class="btn btn-outline-primary btn-sm" (click)="loadTechnologies()">
+                        <i class="fas fa-sync-alt me-1" [class.fa-spin]="isLoading"></i>
+                        Aktualisieren
+                    </button>
+                </div>
+
+                <div class="card-body p-0">
+
+                    <!-- Loading State -->
+                    <div *ngIf="isLoading" class="text-center py-5">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Lädt...</span>
+                        </div>
+                        <p class="mt-3 text-muted">Technologien werden geladen...</p>
+                    </div>
+
+                    <!-- Empty State -->
+                    <div *ngIf="!isLoading && getTechnologiesCount() === 0 && getTotalTechnologiesCount() === 0"
+                         class="text-center py-5">
+                        <i class="fas fa-clipboard-list fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Noch keine Technologien erfasst</h4>
+                        <p class="text-muted mb-3">
+                            Erstellen Sie Ihre erste Technologie, um das Technology Radar zu befüllen.
+                        </p>
+                        <a routerLink="/technology/new" class="btn btn-primary">
+                            <i class="fas fa-plus me-2"></i>
+                            Erste Technologie erstellen
+                        </a>
+                    </div>
+
+                    <!-- No Results State -->
+                    <div *ngIf="!isLoading && getTechnologiesCount() === 0 && getTotalTechnologiesCount() > 0"
+                         class="text-center py-5">
+                        <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                        <h4 class="text-muted">Keine Ergebnisse gefunden</h4>
+                        <p class="text-muted mb-3">
+                            Ihre Filter-Kriterien ergaben keine Treffer. Versuchen Sie andere Suchbegriffe.
+                        </p>
+                        <button class="btn btn-outline-secondary" (click)="searchQuery = ''; selectedStatus = 'all'; selectedCategory = 'all'; selectedRing = 'all'; applyFiltersAndSorting()">
+                            <i class="fas fa-times-circle me-2"></i>
+                            Filter zurücksetzen
+                        </button>
+                    </div>
+
+                    <!-- Technologie-Tabelle -->
+                    <div *ngIf="!isLoading && getTechnologiesCount() > 0" class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                            <tr>
+                                <!-- Sortierbare Spalten-Header -->
+                                <th scope="col" class="sortable-header" (click)="changeSorting('name')">
+                                    Name
+                                    <i class="fas fa-sort ms-1"
+                                       [class.fa-sort-up]="sortField === 'name' && sortDirection === 'asc'"
+                                       [class.fa-sort-down]="sortField === 'name' && sortDirection === 'desc'"></i>
+                                </th>
+                                <th scope="col" class="sortable-header" (click)="changeSorting('category')">
+                                    Kategorie
+                                    <i class="fas fa-sort ms-1"
+                                       [class.fa-sort-up]="sortField === 'category' && sortDirection === 'asc'"
+                                       [class.fa-sort-down]="sortField === 'category' && sortDirection === 'desc'"></i>
+                                </th>
+                                <th scope="col">Status</th>
+                                <th scope="col" class="d-none d-md-table-cell">Ring</th>
+                                <th scope="col" class="sortable-header d-none d-lg-table-cell" (click)="changeSorting('updatedAt')">
+                                    Letzte Änderung
+                                    <i class="fas fa-sort ms-1"
+                                       [class.fa-sort-up]="sortField === 'updatedAt' && sortDirection === 'asc'"
+                                       [class.fa-sort-down]="sortField === 'updatedAt' && sortDirection === 'desc'"></i>
+                                </th>
+                                <th scope="col" class="text-end" style="width: 150px;">Aktionen</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let technology of filteredTechnologies; trackBy: trackByTechnologyId">
+
+                                <!-- Name mit Beschreibung -->
+                                <td>
+                                    <div>
+                                        <strong>{{ technology.name }}</strong>
+                                        <br>
+                                        <small class="text-muted" [title]="technology.description">
+                                            {{ technology.description.length > 100 ?
+                                            (technology.description | slice:0:100) + '...' :
+                                            technology.description }}
+                                        </small>
+                                    </div>
+                                </td>
+
+                                <!-- Kategorie -->
+                                <td>
+                                    <span class="badge bg-secondary">{{ technology.category }}</span>
+                                </td>
+
+                                <!-- Status -->
+                                <td>
+                    <span class="badge" [ngClass]="getStatusBadgeClass(technology.status)">
+                      <i class="fas"
+                         [class.fa-globe]="technology.status === TechnologyStatus.PUBLISHED"
+                         [class.fa-edit]="technology.status === TechnologyStatus.DRAFT"></i>
+                        {{ technology.status === TechnologyStatus.PUBLISHED ? 'Veröffentlicht' : 'Entwurf' }}
+                    </span>
+                                </td>
+
+                                <!-- Ring (nur auf Desktop) -->
+                                <td class="d-none d-md-table-cell">
+                    <span *ngIf="technology.ring"
+                          class="badge"
+                          [ngClass]="getRingBadgeClass(technology.ring)"
+                          [title]="technology.ringDescription">
+                      {{ technology.ring }}
+                    </span>
+                                    <small class="text-muted" *ngIf="!technology.ring">
+                                        Nicht festgelegt
+                                    </small>
+                                </td>
+
+                                <!-- Letzte Änderung (nur auf Large Screens) -->
+                                <td class="d-none d-lg-table-cell">
+                                    <small class="text-muted">
+                                        {{ formatDate(technology.updatedAt) }}
+                                    </small>
+                                </td>
+
+                                <!-- Aktionen -->
+                                <td class="text-end">
+                                    <div class="btn-group btn-group-sm" role="group">
+
+                                        <!-- Bearbeiten Button -->
+                                        <a [routerLink]="['/technology/edit', technology.id]"
+                                           class="btn btn-outline-primary"
+                                           title="Bearbeiten">
+                                            <i class="fas fa-edit"></i>
+                                            <span class="d-none d-xl-inline ms-1">Edit</span>
+                                        </a>
+
+                                        <!-- Veröffentlichen Button (nur für Entwürfe mit Ring) -->
+                                        <button *ngIf="technology.status === TechnologyStatus.DRAFT && technology.ring && technology.ringDescription"
+                                                class="btn btn-outline-success"
+                                                title="Veröffentlichen"
+                                                [disabled]="isDeleting[technology.id || '']"
+                                                (click)="publishTechnology(technology)">
+                                            <span *ngIf="isDeleting[technology.id || '']" class="spinner-border spinner-border-sm"></span>
+                                            <i *ngIf="!isDeleting[technology.id || '']" class="fas fa-globe"></i>
+                                        </button>
+
+                                        <!-- Löschen Button (nur für Entwürfe) -->
+                                        <button *ngIf="technology.status === TechnologyStatus.DRAFT"
+                                                class="btn btn-outline-danger"
+                                                title="Löschen"
+                                                [disabled]="isDeleting[technology.id || '']"
+                                                (click)="deleteTechnology(technology)">
+                                            <span *ngIf="isDeleting[technology.id || '']" class="spinner-border spinner-border-sm"></span>
+                                            <i *ngIf="!isDeleting[technology.id || '']" class="fas fa-trash"></i>
+                                        </button>
+
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

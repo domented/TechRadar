@@ -1,0 +1,243 @@
+/* src/app/features/technology/technology-form.component.css */
+
+/*
+  Responsive Design-Prinzipien für verschiedene Bildschirmgrößen
+  Mobile-First-Ansatz für optimale Performance auf allen Geräten
+*/
+
+/* Container-Optimierungen für bessere Lesbarkeit */
+.container-fluid {
+    max-width: 1200px; /* Verhindert zu breite Layouts auf großen Bildschirmen */
+}
+
+/* Card-Design für professionelle Optik */
+.card {
+    border: none;
+    border-radius: 12px;
+    transition: box-shadow 0.3s ease; /* Sanfte Hover-Effekte */
+}
+
+.card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-header {
+    border-radius: 12px 12px 0 0 !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Formular-Styling für bessere Benutzerführung */
+.form-label {
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-label .text-danger {
+    font-size: 0.9em;
+}
+
+/* Input-Felder mit verbesserter Fokus-Führung */
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    transform: translateY(-1px); /* Subtile Elevation bei Fokus */
+}
+
+/* Textarea-spezifische Optimierungen */
+textarea.form-control {
+    resize: vertical; /* Nur vertikale Größenänderung */
+    min-height: 120px;
+}
+
+/* Radio-Button-Styling für bessere Visualisierung */
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.form-check-label {
+    cursor: pointer;
+    user-select: none;
+}
+
+/* Status-Icons für visuelle Klarheit */
+.form-check-label .fas {
+    font-size: 1.1em;
+}
+
+/* Button-Design und Hover-Effekte */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+    border-width: 2px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+/* Spezielle Styling für verschiedene Button-Typen */
+.btn-primary {
+    background: linear-gradient(135deg, #0d6efd 0%, #0d5bdd 100%);
+    border-color: #0d6efd;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+    border-color: #198754;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+/* Loading-Animation für besseres Feedback */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Alert-Styling für bessere Sichtbarkeit */
+.alert {
+    border-radius: 8px;
+    border-width: 2px;
+    margin-bottom: 1.5rem;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d1edff 0%, #f0f9ff 100%);
+    border-color: #198754;
+    color: #0f5132;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #ffe6e6 0%, #fff5f5 100%);
+    border-color: #dc3545;
+    color: #721c24;
+}
+
+/* Validation-Styling für klare Fehleranzeigen */
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #dc3545;
+    background: linear-gradient(135deg, #fff5f5 0%, #ffffff 100%);
+}
+
+.invalid-feedback {
+    display: block;
+    font-size: 0.875em;
+    font-weight: 500;
+    color: #dc3545;
+    margin-top: 0.25rem;
+}
+
+/* Help-Text-Styling für bessere Lesbarkeit */
+.form-text {
+    color: #6c757d;
+    font-size: 0.875em;
+    line-height: 1.4;
+    margin-top: 0.25rem;
+}
+
+/* Responsive Anpassungen für verschiedene Bildschirmgrößen */
+@media (max-width: 768px) {
+    .card-body {
+        padding: 1rem;
+    }
+
+    .btn {
+        padding: 0.625rem 1.25rem;
+        font-size: 0.9rem;
+    }
+
+    .d-md-flex .btn {
+        margin-bottom: 0.5rem;
+        width: 100%;
+    }
+
+    .d-md-flex .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .container-fluid {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .card {
+        margin: 0 -0.25rem;
+    }
+
+    .form-control,
+    .form-select,
+    textarea.form-control {
+        font-size: 16px; /* Verhindert Zoom auf iOS */
+    }
+}
+
+/* Accessibility-Verbesserungen */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
+
+/* Focus-Sichtbarkeit für Tastatur-Navigation */
+.btn:focus,
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+    outline: 2px solid #0d6efd;
+    outline-offset: 2px;
+}
+
+/* Hover-Effekte nur auf Geräten mit Maus */
+@media (hover: hover) {
+    .card:hover {
+        transform: translateY(-2px);
+    }
+}
+
+/* Dark Mode Unterstützung (vorbereitet für spätere Implementierung) */
+@media (prefers-color-scheme: dark) {
+    .form-text {
+        color: #adb5bd;
+    }
+
+    .form-label {
+        color: #e9ecef;
+    }
+}
+
+/* Print-Styling für bessere Druckdarstellung */
+@media print {
+    .btn,
+    .alert {
+        display: none !important;
+    }
+
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #dee2e6 !important;
+    }
+}
